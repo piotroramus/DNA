@@ -14,11 +14,13 @@ scripts = [
 
 
 for script in scripts:
-    if os.path.exists(script):
+    path = "scripts/"+script
+    if os.path.exists(path):
         try:
-           out = subprocess.check_output("scripts/"+script, shell=True)
+           out = subprocess.check_output(path, shell=True)
         except subprocess.CalledProcessError as subprocess_exception:
             print "error code", subprocess_exception.returncode
             break
     else:
         print "Cannot find", script
+        break
