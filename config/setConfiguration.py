@@ -19,6 +19,7 @@ def main():
     parser.add_argument('-download', default=joiner('downloads'), help='path to download directory')
     parser.add_argument('-hg', default=joiner('hg19'), help='path to hg19 reference files directory')
     parser.add_argument('-apps', default=joiner('apps'), help='path to applications directory')
+    parser.add_argument('-bwa', default='bwa', help='path to bwa executable')
     # parser.add_argument('', type=str, help='choose: prep_files | install | all')
     args = parser.parse_args()
     configure.get(args.purpose, no_such_arg)(args=args)
@@ -61,7 +62,7 @@ def prepare_input_files(args=None):
             # cd_2_up()
             return False
         print ok('  ok\n')
-        command = 'bwa index -a bwtsw -p hg19 hg19.fa'
+        command = args.bwa + ' index -a bwtsw -p hg19 hg19.fa'
         print blue('\t' + command)
         p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
