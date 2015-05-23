@@ -18,6 +18,7 @@ def main():
     print blue("Welcome to NGS configurator\n")
     parser = argparse.ArgumentParser(description=blue('NGS configurator'))
     parser.add_argument('purpose', type=str, help='choose: prep_files | install | all')
+    # parser.add_argument('', type=str, help='choose: prep_files | install | all')
     args = parser.parse_args()
     configure.get(args.purpose, no_such_arg)(args=args)
 
@@ -38,10 +39,10 @@ def prepare_input_files(args=None):
 
     mkdir('downloads/')
     mkdir('hg19/')
-    if not exists('downloads/chromFa.tar.gz'):
+    if not exists('downloads/chromFa.tar.gz'):  # sth wrong, not sure yet
         if not download_file('hg19', downloadURLs['hg19'], 'downloads/'):  # TODO destination should be configurable
             return False
-    if not extract_file('downloads/chromFa.tar.gz', 'hg19/chromFa'):
+    if not extract_file(os.path.join('downloads', 'chromFa.tar.gz'), 'hg19/chromFa'):
         return False
     print blue('cd hg19/chromFa')
     os.chdir('hg19/chromFa')
@@ -85,13 +86,13 @@ def extract_file(path, destination):
 
 
 def exists(path):
-    # print ' Checking for existence of: ' + path
-    # if os.path.isfile(path):
-    # print ok('Already here: \n    ' + path
-    #     return True
-    # print warning('Not here!')
-    # return False
-    return True
+    print ' Checking for existence of: ' + path
+    if os.path.isfile(path):
+        print ok('Already here: \n    ' + path)
+        return True
+    print warning('Not here!')
+    return False
+    # return True
 
 
 def full_configuration(args=None):
