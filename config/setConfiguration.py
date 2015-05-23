@@ -114,9 +114,9 @@ def install_tools(args=None):
     if not exists(os.path.join(args.download, 'bwa-0.7.12.tar.bz2')):
         if not download_file('bwa', downloadURLs['bwa'], args.download):  # TODO destination should be configurable
             return False
-    if not extract_file(os.path.join(args.download, 'bwa-0.7.12.tar.bz2'), os.path.join(args.hg, 'bwa'), flags=' --strip-components=1'):
+    if not extract_file(os.path.join(args.download, 'bwa-0.7.12.tar.bz2'), os.path.join(args.apps, 'bwa'), flags=' --strip-components=1'):
         return False
-    with cwd(joiner(args.hg, 'bwa')):
+    with cwd(joiner(args.apps, 'bwa')):
         install_lib1(os.path.abspath(os.curdir), install=False)
 
 
