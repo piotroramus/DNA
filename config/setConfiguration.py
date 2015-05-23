@@ -18,6 +18,8 @@ def main():
     print blue("Welcome to NGS configurator\n")
     parser = argparse.ArgumentParser(description=blue('NGS configurator'))
     parser.add_argument('purpose', type=str, help='choose: prep_files | install | all')
+    parser.add_argument('-download', default=joiner('downloads'), help='path to download directory')
+    parser.add_argument('-hg', default=joiner('hg19'), help='path to hg19 reference files directory')
     # parser.add_argument('', type=str, help='choose: prep_files | install | all')
     args = parser.parse_args()
     configure.get(args.purpose, no_such_arg)(args=args)
@@ -38,17 +40,17 @@ def prepare_input_files(args=None):
     #     os.chdir('../..')
     #     print '\tcwd: ' + os.getcwd()
 
-    mkdir('downloads')
+    mkdir(args.download)
     mkdir('hg19')
-    if not exists(os.path.join('downloads', 'chromFa.tar.gz')):  # sth wrong, not sure yet
-        if not download_file('hg19', downloadURLs['hg19'], 'downloads/'):  # TODO destination should be configurable
+    if not exists(os.path.join(args.download, 'chromFa.tar.gz')):  # sth wrong, not sure yet
+        if not download_file(args.hg, downloadURLs['hg19'], args.download):  # TODO destination should be configurable
             return False
-    if not extract_file(os.path.join('downloads', 'chromFa.tar.gz'), 'hg19/chromFa'):
+    if not extract_file(joiner(args.download, 'chromFa.tar.gz'), joiner(args.hg, 'chromFa')):
         return False
     # print blue('cd hg19/chromFa')
     # os.chdir('hg19/chromFa')
     # print '\tcwd: ' + os.getcwd()
-    with cwd(joiner('hg19', 'chromFa')):
+    with cwd(joiner(args.hg, 'chromFa')):
         command = 'cat chr1.fa chr2.fa chr3.fa chr4.fa chr5.fa chr6.fa chr7.fa chr8.fa chr9.fa\
             chr10.fa chr11.fa chr12.fa chr13.fa chr14.fa chr15.fa chr16.fa chr17.fa chr18.fa\
             chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa chrM.fa > hg19.fa'
@@ -106,12 +108,12 @@ def full_configuration(args=None):
 
 
 def install_tools(args=None):
-    mkdir('downloads')
+    mkdir(args.download)
     mkdir('apps')
-    if not exists(os.path.join('downloads', 'bwa-0.7.12.tar.bz2')):
-        if not download_file('bwa', downloadURLs['bwa'], 'downloads'):  # TODO destination should be configurable
+    if not exists(os.path.join(args.download, 'bwa-0.7.12.tar.bz2')):
+        if not download_file('bwa', downloadURLs['bwa'], args.download):  # TODO destination should be configurable
             return False
-    if not extract_file(os.path.join('downloads', 'bwa-0.7.12.tar.bz2'), os.path.join('apps', 'bwa'), flags=' --strip-components=1'):
+    if not extract_file(os.path.join(args.download, 'bwa-0.7.12.tar.bz2'), os.path.join('apps', 'bwa'), flags=' --strip-components=1'):
         return False
     with cwd(joiner('apps', 'bwa')):
         install_lib1(os.path.abspath(os.curdir), install=False)
