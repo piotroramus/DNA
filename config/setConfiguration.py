@@ -20,6 +20,7 @@ def main():
     parser.add_argument('purpose', type=str, help='choose: prep_files | install | all')
     parser.add_argument('-download', default=joiner('downloads'), help='path to download directory')
     parser.add_argument('-hg', default=joiner('hg19'), help='path to hg19 reference files directory')
+    parser.add_argument('-apps', default=joiner('apps'), help='path to applications directory')
     # parser.add_argument('', type=str, help='choose: prep_files | install | all')
     args = parser.parse_args()
     configure.get(args.purpose, no_such_arg)(args=args)
@@ -41,7 +42,7 @@ def prepare_input_files(args=None):
     #     print '\tcwd: ' + os.getcwd()
 
     mkdir(args.download)
-    mkdir('hg19')
+    mkdir(args.hg)
     if not exists(os.path.join(args.download, 'chromFa.tar.gz')):  # sth wrong, not sure yet
         if not download_file(args.hg, downloadURLs['hg19'], args.download):  # TODO destination should be configurable
             return False
@@ -109,13 +110,13 @@ def full_configuration(args=None):
 
 def install_tools(args=None):
     mkdir(args.download)
-    mkdir('apps')
+    mkdir(args.apps)
     if not exists(os.path.join(args.download, 'bwa-0.7.12.tar.bz2')):
         if not download_file('bwa', downloadURLs['bwa'], args.download):  # TODO destination should be configurable
             return False
-    if not extract_file(os.path.join(args.download, 'bwa-0.7.12.tar.bz2'), os.path.join('apps', 'bwa'), flags=' --strip-components=1'):
+    if not extract_file(os.path.join(args.download, 'bwa-0.7.12.tar.bz2'), os.path.join(args.hg, 'bwa'), flags=' --strip-components=1'):
         return False
-    with cwd(joiner('apps', 'bwa')):
+    with cwd(joiner(args.hg, 'bwa')):
         install_lib1(os.path.abspath(os.curdir), install=False)
 
 
