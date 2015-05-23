@@ -40,6 +40,12 @@ def cwd(newdir):
     olddir = os.path.abspath(os.curdir)
     try:
         os.chdir(newdir)
+        print blue('cwd: ' + newdir)
         yield
     finally:
         os.chdir(olddir)
+        print blue('cwd: ' + olddir)
+
+
+def joiner(path, *paths):
+    return os.path.abspath(os.path.join(path, *paths))

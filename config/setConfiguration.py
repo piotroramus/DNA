@@ -3,7 +3,7 @@ from colorama import init
 import os
 import urllib2
 import subprocess
-from config import blue, warning, ok, fail, downloadURLs
+from config import blue, warning, ok, fail, downloadURLs, cwd, joiner
 
 
 def no_such_arg(args=None):
@@ -32,14 +32,14 @@ def prepare_input_files(args=None):
     def clean_downloads():
         pass
 
-    def cd_2_up():
+    def cd_2_up():  # TODO convert to context manager
         print blue('cd ../..')
         os.chdir('../..')
         print '\tcwd: ' + os.getcwd()
 
-    mkdir('downloads/')
-    mkdir('hg19/')
-    if not exists('downloads/chromFa.tar.gz'):  # sth wrong, not sure yet
+    mkdir('downloads')
+    mkdir('hg19')
+    if not exists(os.path.join('downloads', 'chromFa.tar.gz')):  # sth wrong, not sure yet
         if not download_file('hg19', downloadURLs['hg19'], 'downloads/'):  # TODO destination should be configurable
             return False
     if not extract_file(os.path.join('downloads', 'chromFa.tar.gz'), 'hg19/chromFa'):
@@ -71,10 +71,10 @@ def prepare_input_files(args=None):
     return True
 
 
-def extract_file(path, destination):
+def extract_file(path, destination, flags=''):
     print ' Extracting file: ' + path + ' into: ' + destination
     mkdir(destination)
-    command = 'tar xf ' + path + ' -C ' + destination
+    command = 'tar xf ' + path + ' -C ' + destination + ' ' + flags
     print blue('\t' + command)
     p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
@@ -104,8 +104,36 @@ def full_configuration(args=None):
 
 
 def install_tools(args=None):
-    print warning('Not implemented yet!\n')
-    pass
+    mkdir('downloads')
+    mkdir('apps')
+    if not exists(os.path.join('downloads', 'bwa-0.7.12.tar.bz2')):
+        if not download_file('bwa', downloadURLs['bwa'], 'downloads'):  # TODO destination should be configurable
+            return False
+    if not extract_file(os.path.join('downloads', 'bwa-0.7.12.tar.bz2'), os.path.join('apps', 'bwa'), flags=' --strip-components=1'):
+        return False
+    with cwd(joiner('apps', 'bwa')):
+        install_lib1(os.path.abspath(os.curdir), install=False)
+
+
+def install_lib1(path, install=True):
+    print '  Configuring: ' + path
+    command = './configure'
+    print blue('    ' + command)
+    p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    if (p.returncode == 0) and err:
+        print warning('WARNING: \n' + err + '\n')
+    elif p.returncode == 1:
+        print fail('ERROR: \n' + err + '\n')
+        return False
+    print '\n  Configure went OK, time for make.\n'
+    command = 'make'
+    if install:
+        command += ' && make install'
+    print blue('    ' + command)
+    p = subprocess.Popen(command, shell=True)
+    out, err = p.communicate()
+    return True
 
 
 configure = {
