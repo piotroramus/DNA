@@ -1,5 +1,4 @@
 import argparse
-from colorama import init
 import os
 import urllib2
 import subprocess
@@ -14,7 +13,6 @@ def main():
     """
     Main configuration method made to be called if user starts this script on his own
     """
-    init()
     print blue("Welcome to NGS configurator\n")
     parser = argparse.ArgumentParser(description=blue('NGS configurator'))
     parser.add_argument('purpose', type=str, help='choose: prep_files | install | all')
