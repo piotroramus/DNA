@@ -11,12 +11,12 @@ def no_such_arg(args=None):
 
 
 def main():
-    '''
+    """
     Main configuration method made to be called if user starts this script on his own
-    '''
+    """
     init()
     print blue("Welcome to NGS configurator\n")
-    parser=argparse.ArgumentParser(description=blue('NGS configurator'))
+    parser = argparse.ArgumentParser(description=blue('NGS configurator'))
     parser.add_argument('purpose', type=str, help='choose: prep_files | install | all')
     args = parser.parse_args()
     configure.get(args.purpose, no_such_arg)(args=args)
@@ -34,7 +34,7 @@ def prepare_input_files(args=None):
     def cd_2_up():
         print blue('cd ../..')
         os.chdir('../..')
-        print '\tcwd: ' + os.getcwd
+        print '\tcwd: ' + os.getcwd()
 
     mkdir('downloads/')
     mkdir('hg19/')
@@ -87,7 +87,7 @@ def extract_file(path, destination):
 def exists(path):
     # print ' Checking for existence of: ' + path
     # if os.path.isfile(path):
-    #     print ok('Already here: \n    ' + path
+    # print ok('Already here: \n    ' + path
     #     return True
     # print warning('Not here!')
     # return False
@@ -108,9 +108,9 @@ def install_tools(args=None):
 
 
 configure = {
-    'prep_files' : prepare_input_files,
-    'install' : install_tools,
-    'all' : full_configuration,
+    'prep_files': prepare_input_files,
+    'install': install_tools,
+    'all': full_configuration,
 }
 
 
@@ -131,7 +131,7 @@ def download_file(name, url, destination):
         file_size_dl += len(buffer)
         f.write(buffer)
         status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-        status = status + chr(8)*(len(status)+1)
+        status = status + chr(8) * (len(status) + 1)
         print status,
     f.close()
     print '\n'
