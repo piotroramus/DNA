@@ -3,13 +3,13 @@ import os.path
 
 scripts = [
     "alignment.sh",
-    "SAM_to_BAM_conversion.sh",
-    "marking_PCR_duplicates.sh",
-    "local_realignment.sh",
-    "quality_score_recalibration.sh",
-    "produce_raw_SNP_calls.sh",
-    "filter_SNPs.sh",
-    "conversion_to_annovar.sh"
+    # "SAM_to_BAM_conversion.sh",
+    # "marking_PCR_duplicates.sh",
+    # "local_realignment.sh",
+    # "quality_score_recalibration.sh",
+    # "produce_raw_SNP_calls.sh",
+    # "filter_SNPs.sh",
+    # "conversion_to_annovar.sh"
 ]
 
 
