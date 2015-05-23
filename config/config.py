@@ -1,3 +1,6 @@
+from contextlib import contextmanager
+import os
+
 downloadURLs = {
     'bwa': 'http://sourceforge.net/projects/bio-bwa/files/bwa-0.7.12.tar.bz2',
     'pickard': 'https://github.com/broadinstitute/picard/tarball/master/picard.tar.gz',
@@ -30,3 +33,13 @@ def ok(st):
 
 def fail(st):
     return bcolors.FAIL + st + bcolors.ENDC
+
+
+@contextmanager
+def cwd(newdir):
+    olddir = os.path.abspath(os.curdir)
+    try:
+        os.chdir(newdir)
+        yield
+    finally:
+        os.chdir(olddir)
