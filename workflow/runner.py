@@ -2,7 +2,7 @@ import subprocess
 import os.path
 
 scripts = [
-    "alignment.sh",
+    "actual_alignment.sh",
     # "SAM_to_BAM_conversion.sh",
     # "marking_PCR_duplicates.sh",
     # "local_realignment.sh",
