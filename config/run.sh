@@ -1,1 +1,3 @@
-python $HOME/dna/config/setConfiguration.py -download $STORAGE/download -hg $SCRATCH/hg -apps $STORAGE/apps install 
+#!/usr/bin/env bash
+
+python $HOME/dna/config/setConfiguration.py -download $STORAGE/download -hg $SCRATCH/hg -apps $STORAGE/apps install
