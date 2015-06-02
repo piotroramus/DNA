@@ -60,7 +60,7 @@ def prepare_input_files(args=None):
         if err:
             print fail('ERROR: \n' + err + '\n')
             # cd_2_up()
-            return False
+            # return False
         print ok('  ok\n')
         command = args.bwa + ' index -a bwtsw -p hg19 hg19.fa'
         print blue('\t' + command)
@@ -69,7 +69,7 @@ def prepare_input_files(args=None):
         if err:
             print fail('ERROR: \n' + err + '\n')
             # cd_2_up()
-            return False
+            # return False
         # cd_2_up()
     print ok('  ok\n')
     return True
