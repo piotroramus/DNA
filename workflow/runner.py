@@ -17,7 +17,11 @@ for script in scripts:
     path = "scripts/"+script
     if os.path.exists(path):
         try:
-           out = subprocess.check_output(path, shell=True)
+           cmd = './' + path
+           print cmd   
+           p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+           out, err = p.communicate()
+           print out, err
         except subprocess.CalledProcessError as subprocess_exception:
             print "error code", subprocess_exception.returncode
             break
