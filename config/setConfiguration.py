@@ -2,7 +2,7 @@ import argparse
 import os
 import urllib2
 import subprocess
-from config import blue, warning, ok, fail, downloadURLs, cwd, joiner
+from config import blue, warning, ok, fail, downloadURLs, cwd, joiner, run_command
 
 
 def no_such_arg(args=None):
@@ -118,6 +118,17 @@ def install_tools(args=None):
     if not extract_file(os.path.join(args.download, 'apache-ant-1.9.6-bin.tar.gz'), os.path.join(args.apps, 'ant'), flags=' --strip-components=1'):
         return False
     # no need to install ant; its a binary distro.
+
+    blue('Installing Picard')
+    
+    if not exists(os.path.join(args.download, 'master')):
+        if not download_file('picard', downloadURLs['picard'], args.download):
+            return False
+    if not extract_file(os.path.join(args.download, 'master'), os.path.join(args.apps, 'picard'), flags=' --strip-components=1'):
+        return False
+    with cwd(os.path.join(args.apps, 'picard')):
+        command = 'export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.35.x86_64/jre/bin && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant package-commands'
+        run_command(command, Exception)
 
 
 def install_lib1(path, install=True):
