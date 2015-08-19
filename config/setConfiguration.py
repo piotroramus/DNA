@@ -34,12 +34,6 @@ def prepare_input_files(args=None):
     def clean_downloads():
         pass
 
-    # def cd_2_up():  # TODO convert to context manager
-    #
-    #     print blue('cd ../..')
-    #     os.chdir('../..')
-    #     print '\tcwd: ' + os.getcwd()
-
     mkdir(args.download)
     mkdir(args.hg)
     if not exists(os.path.join(args.download, 'chromFa.tar.gz')):  # sth wrong, not sure yet
@@ -47,9 +41,7 @@ def prepare_input_files(args=None):
             return False
     if not extract_file(joiner(args.download, 'chromFa.tar.gz'), joiner(args.hg, 'chromFa')):
         return False
-    # print blue('cd hg19/chromFa')
-    # os.chdir('hg19/chromFa')
-    # print '\tcwd: ' + os.getcwd()
+
     with cwd(joiner(args.hg, 'chromFa')):
         command = 'cat chr1.fa chr2.fa chr3.fa chr4.fa chr5.fa chr6.fa chr7.fa chr8.fa chr9.fa\
             chr10.fa chr11.fa chr12.fa chr13.fa chr14.fa chr15.fa chr16.fa chr17.fa chr18.fa\
@@ -110,13 +102,22 @@ def full_configuration(args=None):
 def install_tools(args=None):
     mkdir(args.download)
     mkdir(args.apps)
+    blue('Installing bwa')
     if not exists(os.path.join(args.download, 'bwa-0.7.12.tar.bz2')):
-        if not download_file('bwa', downloadURLs['bwa'], args.download):  # TODO destination should be configurable
+        if not download_file('bwa', downloadURLs['bwa'], args.download):
             return False
     if not extract_file(os.path.join(args.download, 'bwa-0.7.12.tar.bz2'), os.path.join(args.apps, 'bwa'), flags=' --strip-components=1'):
         return False
     with cwd(joiner(args.apps, 'bwa')):
         install_lib1(os.path.abspath(os.curdir), install=False)
+
+    blue('Installing ant')
+    if not exists(os.path.join(args.download, 'apache-ant-1.9.6-bin.tar.gz')):
+        if not download_file('ant', downloadURLs['ant'], args.download):
+            return False
+    if not extract_file(os.path.join(args.download, 'apache-ant-1.9.6-bin.tar.gz'), os.path.join(args.apps, 'ant'), flags=' --strip-components=1'):
+        return False
+    # no need to install ant; its a binary distro.
 
 
 def install_lib1(path, install=True):

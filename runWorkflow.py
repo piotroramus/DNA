@@ -16,6 +16,12 @@ def actual_alignment(args):
     ok('done')
 
 
+def SAM_to_BAM_conversion(args):
+    blue('Going for STAGE_2 - SAM_to_BAM_conversion')
+    with cwd(joiner(args.hg, 'chromFa')):
+        cmd = 'java -Xmx4g -Djava.io.tmpdir=/tmp -jar $PICARD_SORTSAM_JAR SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+
+
 def main():
     """
     Main configuration method made to be called if user starts this script on his own
