@@ -19,20 +19,51 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-def blue(st):
-    return bcolors.OKBLUE + st + bcolors.ENDC
+class Ver(object):
+    verbose = 4
 
 
-def warning(st):
-    return bcolors.WARNING + st + bcolors.ENDC
+def set_verbosity(args):
+    if args.VERBOSE:
+        try:
+            v_level = int(args.VERBOSE)
+        except:
+            v_level = 4
+        finally:
+            Ver.verbose = v_level
 
 
-def ok(st):
-    return bcolors.OKGREEN + st + bcolors.ENDC
+def verbosity_decorator(f):
+    
+    def wrapper(st):
+        res = f(st, Ver.verbose)
+        return res
+        
+    return wrapper
 
 
-def fail(st):
-    return bcolors.FAIL + st + bcolors.ENDC
+@verbosity_decorator
+def blue(st, a=2):
+    if a>3:
+        print bcolors.OKBLUE + st + bcolors.ENDC
+
+
+@verbosity_decorator
+def warning(st, a=2):
+    if a>1:
+        print bcolors.WARNING + st + bcolors.ENDC
+
+
+@verbosity_decorator
+def ok(st, a=2):
+    if a>2:
+        print bcolors.OKGREEN + st + bcolors.ENDC
+
+
+@verbosity_decorator
+def fail(st, a=2):
+    if a>0:
+        print bcolors.FAIL + st + bcolors.ENDC
 
 
 @contextmanager

@@ -6,7 +6,7 @@ from config import blue, warning, ok, fail, downloadURLs, cwd, joiner
 
 
 def no_such_arg(args=None):
-    print fail('No such arg as: ' + args.purpose + ' \ntry: prep_files | install | all\n')
+    fail('No such arg as: ' + args.purpose + ' \ntry: prep_files | install | all\n')
 
 
 def main():
@@ -54,24 +54,24 @@ def prepare_input_files(args=None):
         command = 'cat chr1.fa chr2.fa chr3.fa chr4.fa chr5.fa chr6.fa chr7.fa chr8.fa chr9.fa\
             chr10.fa chr11.fa chr12.fa chr13.fa chr14.fa chr15.fa chr16.fa chr17.fa chr18.fa\
             chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa chrM.fa > hg19.fa'
-        print blue('\t' + command)
+        blue('\t' + command)
         p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         if err:
-            print fail('ERROR: \n' + err + '\n')
+            fail('ERROR: \n' + err + '\n')
             # cd_2_up()
             # return False
-        print ok('  ok\n')
+        ok('  ok\n')
         command = args.bwa + ' index -a bwtsw -p hg19 hg19.fa'
-        print blue('\t' + command)
+        blue('\t' + command)
         p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         if err:
-            print fail('ERROR: \n' + err + '\n')
+            fail('ERROR: \n' + err + '\n')
             # cd_2_up()
             # return False
         # cd_2_up()
-    print ok('  ok\n')
+    ok('  ok\n')
     return True
 
 
@@ -79,31 +79,31 @@ def extract_file(path, destination, flags=''):
     print ' Extracting file: ' + path + ' into: ' + destination
     mkdir(destination)
     command = 'tar xf ' + path + ' -C ' + destination + ' ' + flags
-    print blue('\t' + command)
+    blue('\t' + command)
     p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
     if err:
-        print fail('ERROR: \n' + err + '\n')
+        fail('ERROR: \n' + err + '\n')
         return False
-    print ok('  ok\n')
+    ok('  ok\n')
     return True
 
 
 def exists(path):
     print ' Checking for existence of: ' + path
     if os.path.isfile(path):
-        print ok('Already here: \n    ' + path)
+        ok('Already here: \n    ' + path)
         return True
-    print warning('Not here!')
+    warning('Not here!')
     return False
     # return True
 
 
 def full_configuration(args=None):
     if not install_tools(args):
-        print fail('nah')
+        fail('nah')
     if not prepare_input_files(args):
-        print fail('nah')
+        fail('nah')
     print ok('ok')
 
 
@@ -122,19 +122,19 @@ def install_tools(args=None):
 def install_lib1(path, install=True):
     print '  Configuring: ' + path
     command = './configure'
-    print blue('    ' + command)
+    blue('    ' + command)
     p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
     out, err = p.communicate()
     if (p.returncode == 0) and err:
-        print warning('WARNING: \n' + err + '\n')
+        warning('WARNING: \n' + err + '\n')
     elif p.returncode == 1:
-        print fail('ERROR: \n' + err + '\n')
+        fail('ERROR: \n' + err + '\n')
         return False
     print '\n  Configure went OK, time for make.\n'
     command = 'make'
     if install:
         command += ' && make install'
-    print blue('    ' + command)
+    blue('    ' + command)
     p = subprocess.Popen(command, shell=True)
     out, err = p.communicate()
     return True
