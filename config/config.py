@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 import os
+import subprocess
 
 downloadURLs = {
     'bwa': 'http://sourceforge.net/projects/bio-bwa/files/bwa-0.7.12.tar.bz2',
@@ -80,3 +81,17 @@ def cwd(newdir):
 
 def joiner(path, *paths):
     return os.path.abspath(os.path.join(path, *paths))
+
+
+def run_command(command, error_type, ship_output=False):
+    if ship_output:
+        p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    else:
+        p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
+    out, err = p.communicate()
+    if (p.returncode == 0) and err:
+        warning('WARNING: \n' + err + '\n')
+    elif p.returncode > 0:
+        raise error_type('Something went wrong while: ' + command + '\n' + err)
+    if ship_output:
+        return out.strip()
