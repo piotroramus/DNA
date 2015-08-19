@@ -127,7 +127,7 @@ def install_tools(args=None):
     if not extract_file(os.path.join(args.download, 'master'), os.path.join(args.apps, 'picard'), flags=' --strip-components=1'):
         return False
     with cwd(os.path.join(args.apps, 'picard')):
-        command = 'export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.35.x86_64/jre/bin && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant package-commands'
+        command = 'export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.35.x86_64/jre && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant package-commands'
         run_command(command, Exception)
 
 
