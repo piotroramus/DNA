@@ -138,6 +138,7 @@ def install_tools(args=None):
         return False
     with cwd(os.path.join(args.apps, 'picard')):
         command = 'export JAVA_HOME=' + os.path.join(args.apps, 'java') + ' && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant package-commands'
+        blue(command)
         run_command(command, Exception)
 
 
