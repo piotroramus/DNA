@@ -119,16 +119,25 @@ def install_tools(args=None):
         return False
     # no need to install ant; its a binary distro.
 
-    blue('Installing Picard')
-    
-    if not exists(os.path.join(args.download, 'master')):
-        if not download_file('picard', downloadURLs['picard'], args.download):
-            return False
-    if not extract_file(os.path.join(args.download, 'master'), os.path.join(args.apps, 'picard'), flags=' --strip-components=1'):
-        return False
-    with cwd(os.path.join(args.apps, 'picard')):
-        command = 'export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.35.x86_64/jre && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant package-commands'
+    blue('Installing Java')
+    with cwd(args.download):
+        command = 'wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/7u4-b20/jdk-7u4-linux-x64.tar.gz"'
+        blue(command)
         run_command(command, Exception)
+    if not extract_file(os.path.join(args.download, 'jdk-7u4-linux-x64.tar.gz'), os.path.join(args.apps, 'java'), flags=' --strip-components=1'):
+        return False
+
+
+    # blue('Installing Picard')
+    
+    # if not exists(os.path.join(args.download, 'master')):
+    #     if not download_file('picard', downloadURLs['picard'], args.download):
+    #         return False
+    # if not extract_file(os.path.join(args.download, 'master'), os.path.join(args.apps, 'picard'), flags=' --strip-components=1'):
+    #     return False
+    # with cwd(os.path.join(args.apps, 'picard')):
+    #     command = 'export JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.35.x86_64/jre/bin && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant package-commands'
+    #     run_command(command, Exception)
 
 
 def install_lib1(path, install=True):
