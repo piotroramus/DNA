@@ -137,6 +137,8 @@ def install_tools(args=None):
     if not extract_file(os.path.join(args.download, 'master'), os.path.join(args.apps, 'picard'), flags=' --strip-components=1'):
         return False
     with cwd(os.path.join(args.apps, 'picard')):
+        blue('copying custom picard build file..')
+        os.shutil.copyfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build.xml.picard'), 'build.xml')
         command = 'export JAVA_HOME=' + os.path.join(args.apps, 'java') + ' && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant package-commands'
         blue(command)
         run_command(command, Exception)
