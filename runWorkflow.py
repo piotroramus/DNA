@@ -19,7 +19,10 @@ def actual_alignment(args):
 def SAM_to_BAM_conversion(args):
     blue('Going for STAGE_2 - SAM_to_BAM_conversion')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = 'java -Xmx4g -Djava.io.tmpdir=/tmp -jar $PICARD_SORTSAM_JAR SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        cmd = args.java + ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.PICARD + ' SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        blue(cmd)
+        run_command(cmd, Exception)
+    ok('done')
 
 
 def main():
@@ -34,8 +37,9 @@ def main():
     parser.add_argument('-bwa', default='bwa', help='path to bwa executable')
     parser.add_argument('-java', default='java', help='path to java executable')
     parser.add_argument('--java-home', dest='JAVA_HOME', default='/usr/lib', help='path to JAVA_HOME')
-    parser.add_argument('-picard', default='picard', help='path to picard')
+    parser.add_argument('-picard', dest='PICARD', default='picard', help='path to picard jar')
     parser.add_argument('-1', dest='STAGE_1', action='store_true', help='set true if you want to run stage 1 - \"actual alignment\"')
+    parser.add_argument('-2', dest='STAGE_2', action='store_true', help='set true if you want to run stage 2 - \"SAM to BAM conversion\"')
     parser.add_argument('-all', dest='ALL_STAGES', action='store_true', help='set true if you want to run all stages one by one.')
     args = parser.parse_args()
 
@@ -43,6 +47,8 @@ def main():
         blue('All stages to be processed.')
     if args.STAGE_1 or args.ALL_STAGES:
         actual_alignment(args)
+    if args.STAGE_2 or args.ALL_STAGES:
+        SAM_to_BAM_conversion(args)
 
 if __name__ == '__main__':
     main()
