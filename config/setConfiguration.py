@@ -52,18 +52,14 @@ def prepare_input_files(args=None):
         out, err = p.communicate()
         if err:
             fail('ERROR: \n' + err + '\n')
-            # cd_2_up()
-            # return False
         ok('  ok\n')
         command = args.bwa + ' index -a bwtsw -p hg19 hg19.fa'
         blue('\t' + command)
-        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(command, shell=True)
         out, err = p.communicate()
-        if err:
-            fail('ERROR: \n' + err + '\n')
-            # cd_2_up()
-            # return False
-        # cd_2_up()
+        # print out
+        # if err:
+        #     warning('stderr: \n' + err + '\n')
     ok('  ok\n')
     return True
 
@@ -140,7 +136,7 @@ def install_tools(args=None):
     with cwd(os.path.join(args.apps, 'picard')):
         blue('copying custom picard build file..')
         shutil.copyfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build.xml.picard'), 'build.xml')
-        command = 'export JAVA_HOME=' + os.path.join(args.apps, 'java') + ' && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant package-commands'
+        command = 'export JAVA_HOME=' + os.path.join(args.apps, 'java') + ' && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant clone-htsjdk package-commands'
         blue(command)
         run_command(command, Exception)
 
