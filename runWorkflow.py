@@ -9,7 +9,7 @@ def actual_alignment(args):
         cmd = args.bwa + ' aln -t 4 -f input.sai hg19 input.fastq'
         blue(cmd)
         run_command(cmd, Exception)
-        cmd = args.bwa + ' samse -f out.sam -r "@RG\tID:<ID>\tLB:<LIBRARY_NAME>\tSM:<SAMPLE_NAME>\tPL:ILLUMINA" hg19 input.sai input.fastq'
+        cmd = args.bwa + ' samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq'
         blue(cmd)
         run_command(cmd, Exception)
         # cmd = args.bwa + ' sampe -f out.sam -r "@RQ\tID:<ID>\tLB:<LIBRARY_NAME>\tSM:<SAMPLE_NAME>\tPL:ILLUMINA" hg19 input1.sai input2.sai input1.fq input2.fq'
