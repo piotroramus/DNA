@@ -25,6 +25,15 @@ def SAM_to_BAM_conversion(args):
     ok('done')
 
 
+def marking_PCR_duplicates(args):
+    blue('Going for STAGE_3 - marking_PCR_duplicates')
+    with cwd(joiner(args.hg, 'chromFa')):
+        cmd = args.java + ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.PICARD + ' MarkDuplicates INPUT=output.bam OUTPUT=output.marked.bam METRICS_FILE=metrics CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT'
+        blue(cmd)
+        run_command(cmd, Exception)
+    ok('done')
+
+
 def main():
     """
     Main configuration method made to be called if user starts this script on his own
@@ -40,6 +49,7 @@ def main():
     parser.add_argument('-picard', dest='PICARD', default='picard', help='path to picard jar')
     parser.add_argument('-1', dest='STAGE_1', action='store_true', help='set true if you want to run stage 1 - \"actual alignment\"')
     parser.add_argument('-2', dest='STAGE_2', action='store_true', help='set true if you want to run stage 2 - \"SAM to BAM conversion\"')
+    parser.add_argument('-3', dest='STAGE_3', action='store_true', help='set true if you want to run stage 3 - \"marking_PCR_duplicates\"')
     parser.add_argument('-all', dest='ALL_STAGES', action='store_true', help='set true if you want to run all stages one by one.')
     args = parser.parse_args()
 
@@ -49,6 +59,8 @@ def main():
         actual_alignment(args)
     if args.STAGE_2 or args.ALL_STAGES:
         SAM_to_BAM_conversion(args)
+    if args.STAGE_3 or args.ALL_STAGES:
+        pass
 
 if __name__ == '__main__':
     main()
