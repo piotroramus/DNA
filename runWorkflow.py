@@ -34,6 +34,13 @@ def marking_PCR_duplicates(args):
     ok('done')
 
 
+def local_realignment(args):
+    blue('Going for STAGE_4 - local_realignment')
+    with cwd(joiner(args.hg, 'chromFa')):
+        # cmd = args.java + ' -Xmx4g -'
+        pass
+
+
 def main():
     """
     Main configuration method made to be called if user starts this script on his own

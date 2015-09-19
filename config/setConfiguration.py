@@ -140,6 +140,17 @@ def install_tools(args=None):
         blue(command)
         run_command(command, Exception)
 
+    blue('Installing GATK')
+
+    #TODO add GATK tar.gz copying utility. :D
+    warning('Please copy GATK.tar.gz to downloads by hand.....')
+
+    if not extract_file(os.path.join(args.download, 'GenomeAnalysisTK-3.4-46.tar.bz2'), os.path.join(args.apps, 'gatk'), flags='--strip-components=1'):
+        return False
+    
+
+
+
 
 def install_lib1(path, install=True):
     print '  Configuring: ' + path
