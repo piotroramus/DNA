@@ -60,7 +60,7 @@ def main():
     if args.STAGE_2 or args.ALL_STAGES:
         SAM_to_BAM_conversion(args)
     if args.STAGE_3 or args.ALL_STAGES:
-        pass
+        marking_PCR_duplicates(args)
 
 if __name__ == '__main__':
     main()
