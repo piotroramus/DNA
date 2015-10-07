@@ -145,8 +145,12 @@ def install_tools(args=None):
     #TODO add GATK tar.gz copying utility. :D
     warning('Please copy GATK.tar.gz to downloads by hand.....')
 
-    if not extract_file(os.path.join(args.download, 'GenomeAnalysisTK-3.4-46.tar.bz2'), os.path.join(args.apps, 'gatk'), flags='--strip-components=1'):
-        return False
+    path = os.path.join(args.download, 'GenomeAnalysisTK-3.4-46.tar.bz2')
+    run_command('mkdir ' + os.path.join(args.apps, 'gatk'), Exception) 
+    run_command('tar xf ' + path + ' -C ' + os.path.join(args.apps, 'gatk'), Exception)
+
+    #if not extract_file(os.path.join(args.download, 'GenomeAnalysisTK-3.4-46.tar.bz2'), os.path.join(args.apps, 'gatk'), flags='--strip-components=1'):
+        #return False
     
 
 
