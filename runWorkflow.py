@@ -36,9 +36,18 @@ def marking_PCR_duplicates(args):
 
 def local_realignment(args):
     blue('Going for STAGE_4 - local_realignment')
+    blue('\tpart1')
     with cwd(joiner(args.hg, 'chromFa')):
-        # cmd = args.java + ' -Xmx4g -'
-        pass
+        cmd = args.java + ' -Xmx4g -jar ' + args.GATK + ' -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
+        blue(cmd)
+        run_command(cmd, Exception)
+        blue('\tpart2')
+        cmd = args.java ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.GATK + ' -I uotput.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
+        blue(cmd)
+        run_command(cmd, Exception)
+        blue('\tpart3')
+        cmd = args.java ' -Djava.io.tmpdir=/tmp/flx-auswerter -jar ' + args.PICARD + ' FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+    ok('Done!')
 
 
 def main():
@@ -54,9 +63,11 @@ def main():
     parser.add_argument('-java', default='java', help='path to java executable')
     parser.add_argument('--java-home', dest='JAVA_HOME', default='/usr/lib', help='path to JAVA_HOME')
     parser.add_argument('-picard', dest='PICARD', default='picard', help='path to picard jar')
+    parser.add_argument('-gatk', dest='GATK', default='gatk', help='path to GATK jar')
     parser.add_argument('-1', dest='STAGE_1', action='store_true', help='set true if you want to run stage 1 - \"actual alignment\"')
     parser.add_argument('-2', dest='STAGE_2', action='store_true', help='set true if you want to run stage 2 - \"SAM to BAM conversion\"')
     parser.add_argument('-3', dest='STAGE_3', action='store_true', help='set true if you want to run stage 3 - \"marking_PCR_duplicates\"')
+    parser.add_argument('-4', dest='STAGE_4', action='store_true', help='set true if you want to run stage 4 - \"local_realignment\"')
     parser.add_argument('-all', dest='ALL_STAGES', action='store_true', help='set true if you want to run all stages one by one.')
     args = parser.parse_args()
 
@@ -68,6 +79,8 @@ def main():
         SAM_to_BAM_conversion(args)
     if args.STAGE_3 or args.ALL_STAGES:
         marking_PCR_duplicates(args)
+    if args.STAGE_4 or args.ALL_STAGES:
+        local_realignment(args)
 
 if __name__ == '__main__':
     main()
