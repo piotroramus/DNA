@@ -4,11 +4,7 @@ import urllib2
 import subprocess
 import shutil
 from config import blue, warning, ok, fail, downloadURLs, cwd, joiner, run_command
-
-
-def no_such_arg(args=None):
-    fail('No such arg as: ' + args.purpose + ' \ntry: prep_files | install | all\n')
-
+from tools import ngs_tools
 
 def main():
     """
@@ -24,6 +20,32 @@ def main():
     # parser.add_argument('', type=str, help='choose: prep_files | install | all')
     args = parser.parse_args()
     configure.get(args.purpose, no_such_arg)(args=args)
+
+def uninstall_tools(args=None):
+    for tool in ngs_tools:
+        blue('Uninstalling '+tool.name)
+        unload_module(tool.module_path)
+
+def install_tools(args=None):
+    for tool in ngs_tools:
+        blue('Installing '+tool.name)
+        load_module(tool.module_path) 
+
+    print "Running bwa"
+    run_command('bwa', Exception)
+
+def load_module(module):
+    command = 'module load '+module
+    blue(command)
+    run_command(command, Exception)
+
+def unload_module(module):
+    command = 'set -e;module unload '+module
+    blue(command)
+    run_command(command, Exception)
+
+def no_such_arg(args=None):
+    fail('No such arg as: ' + args.purpose + ' \ntry: prep_files | install | all\n')
 
 
 def mkdir(path):
@@ -95,67 +117,6 @@ def full_configuration(args=None):
         fail('nah')
     print ok('ok')
 
-
-def install_tools(args=None):
-    mkdir(args.download)
-    mkdir(args.apps)
-    blue('Installing bwa')
-    if not exists(os.path.join(args.download, 'bwa-0.7.12.tar.bz2')):
-        if not download_file('bwa', downloadURLs['bwa'], args.download):
-            return False
-    if not extract_file(os.path.join(args.download, 'bwa-0.7.12.tar.bz2'), os.path.join(args.apps, 'bwa'), flags=' --strip-components=1'):
-        return False
-    with cwd(joiner(args.apps, 'bwa')):
-        install_lib1(os.path.abspath(os.curdir), install=False)
-
-    blue('Installing ant')
-    if not exists(os.path.join(args.download, 'apache-ant-1.9.6-bin.tar.gz')):
-        if not download_file('ant', downloadURLs['ant'], args.download):
-            return False
-    if not extract_file(os.path.join(args.download, 'apache-ant-1.9.6-bin.tar.gz'), os.path.join(args.apps, 'ant'), flags=' --strip-components=1'):
-        return False
-    # no need to install ant; its a binary distro.
-
-    blue('Installing Java')
-    with cwd(args.download):
-        command = 'wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/7u4-b20/jdk-7u4-linux-x64.tar.gz"'
-        blue(command)
-        run_command(command, Exception)
-    if not extract_file(os.path.join(args.download, 'jdk-7u4-linux-x64.tar.gz'), os.path.join(args.apps, 'java'), flags=' --strip-components=1'):
-        return False
-    # just extract, like ant.
-
-
-    blue('Installing Picard')
-    
-    if not exists(os.path.join(args.download, 'master')):
-        if not download_file('picard', downloadURLs['picard'], args.download):
-            return False
-    if not extract_file(os.path.join(args.download, 'master'), os.path.join(args.apps, 'picard'), flags=' --strip-components=1'):
-        return False
-    with cwd(os.path.join(args.apps, 'picard')):
-        blue('copying custom picard build file..')
-        shutil.copyfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'build.xml.picard'), 'build.xml')
-        command = 'export JAVA_HOME=' + os.path.join(args.apps, 'java') + ' && ' + os.path.join(args.apps, 'ant', 'bin', 'ant') + ' -lib lib/ant clone-htsjdk package-commands'
-        blue(command)
-        run_command(command, Exception)
-
-    blue('Installing GATK')
-
-    #TODO add GATK tar.gz copying utility. :D
-    warning('Please copy GATK.tar.gz to downloads by hand.....')
-
-    path = os.path.join(args.download, 'GenomeAnalysisTK-3.4-46.tar.bz2')
-    run_command('mkdir ' + os.path.join(args.apps, 'gatk'), Exception) 
-    run_command('tar xf ' + path + ' -C ' + os.path.join(args.apps, 'gatk'), Exception)
-
-    #if not extract_file(os.path.join(args.download, 'GenomeAnalysisTK-3.4-46.tar.bz2'), os.path.join(args.apps, 'gatk'), flags='--strip-components=1'):
-        #return False
-    
-
-
-
-
 def install_lib1(path, install=True):
     print '  Configuring: ' + path
     command = './configure'
@@ -175,13 +136,6 @@ def install_lib1(path, install=True):
     p = subprocess.Popen(command, shell=True)
     out, err = p.communicate()
     return True
-
-
-configure = {
-    'prep_files': prepare_input_files,
-    'install': install_tools,
-    'all': full_configuration,
-}
 
 
 def download_file(name, url, destination):
@@ -207,6 +161,12 @@ def download_file(name, url, destination):
     print '\n'
     return True
 
+configure = {
+    'prep_files': prepare_input_files,
+    'install': install_tools,
+    'uninstall': uninstall_tools,
+    'all': full_configuration
+}
 
 if __name__ == '__main__':
     main()
