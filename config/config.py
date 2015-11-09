@@ -3,10 +3,7 @@ import os
 import subprocess
 
 downloadURLs = {
-    'bwa': 'http://sourceforge.net/projects/bio-bwa/files/bwa-0.7.12.tar.bz2',
-    'picard': 'https://github.com/broadinstitute/picard/tarball/master',
     'hg19': 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromFa.tar.gz',
-    'ant': 'http://ftp.ps.pl/pub/apache//ant/binaries/apache-ant-1.9.6-bin.tar.gz'
 }
 
 
