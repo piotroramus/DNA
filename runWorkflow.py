@@ -42,7 +42,7 @@ def local_realignment(args):
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart2')
-        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.GATK + ' -I uotput.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
+        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.GATK + ' -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart3')
