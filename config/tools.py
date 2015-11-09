@@ -13,6 +13,7 @@ def dictify(tools):
 	dictionary = {}
 	for tool in tools:
 		dictionary[tool.name] = tool.module_path
+	return dictionary
 
 
 ngs_tools_dict = dictify(ngs_tools)
