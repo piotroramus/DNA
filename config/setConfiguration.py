@@ -4,7 +4,7 @@ import urllib2
 import subprocess
 import shutil
 from config import blue, warning, ok, fail, downloadURLs, cwd, joiner, run_command
-from tools import ngs_tools
+from tools import ngs_tools_dict
 
 def main():
     """
@@ -39,7 +39,7 @@ def prepare_input_files(args=None):
             chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa chrM.fa > hg19.fa'
         blue('\t' + command)
         run_command(command, Exception)
-        command = 'module add ' + ngs_tools.bwa + ' && bwa index -a bwtsw -p hg19 hg19.fa'
+        command = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa index -a bwtsw -p hg19 hg19.fa'
         blue('\t' + command)
         run_command(command, Exception)
     ok('  ok\n')
