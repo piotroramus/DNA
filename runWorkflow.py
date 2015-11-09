@@ -13,14 +13,13 @@ def actual_alignment(args):
         cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq'
         blue(cmd)
         run_command(cmd, Exception)
-        # cmd = 'module add ' + ngs_tools.bwa + ' && bwa sampe -f out.sam -r "@RQ\tID:<ID>\tLB:<LIBRARY_NAME>\tSM:<SAMPLE_NAME>\tPL:ILLUMINA" hg19 input1.sai input2.sai input1.fq input2.fq'
     ok('done')
 
 
 def SAM_to_BAM_conversion(args):
     blue('Going for STAGE_2 - SAM_to_BAM_conversion')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = args.java + ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.PICARD + ' SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.PICARD + ' SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
         blue(cmd)
         run_command(cmd, Exception)
     ok('done')
@@ -29,7 +28,7 @@ def SAM_to_BAM_conversion(args):
 def marking_PCR_duplicates(args):
     blue('Going for STAGE_3 - marking_PCR_duplicates')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = args.java + ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.PICARD + ' MarkDuplicates INPUT=output.bam OUTPUT=output.marked.bam METRICS_FILE=metrics CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT'
+        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.PICARD + ' MarkDuplicates INPUT=output.bam OUTPUT=output.marked.bam METRICS_FILE=metrics CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT'
         blue(cmd)
         run_command(cmd, Exception)
     ok('done')
@@ -39,15 +38,15 @@ def local_realignment(args):
     blue('Going for STAGE_4 - local_realignment')
     blue('\tpart1')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = args.java + ' -Xmx4g -jar ' + args.GATK + ' -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
+        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Xmx4g -jar ' + args.GATK + ' -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart2')
-        cmd = args.java ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.GATK + ' -I uotput.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
+        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.GATK + ' -I uotput.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart3')
-        cmd = args.java ' -Djava.io.tmpdir=/tmp/flx-auswerter -jar ' + args.PICARD + ' FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Djava.io.tmpdir=/tmp/flx-auswerter -jar ' + args.PICARD + ' FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
     ok('Done!')
 
 
