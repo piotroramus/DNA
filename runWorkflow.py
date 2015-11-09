@@ -1,16 +1,16 @@
 import argparse
 
 from config.config import blue, joiner, run_command, ok, cwd
-from config.tools import ngs_tools
+from config.tools import ngs_tools_dict
 
 
 def actual_alignment(args):
     blue('Going for STAGE_1 - actual_alignment')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = 'module add ' + ngs_tools.bwa + ' && bwa aln -t 4 -f input.sai hg19 input.fastq'
+        cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa aln -t 4 -f input.sai hg19 input.fastq'
         blue(cmd)
         run_command(cmd, Exception)
-        cmd = 'module add ' + ngs_tools.bwa + ' && bwa samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq'
+        cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq'
         blue(cmd)
         run_command(cmd, Exception)
         # cmd = 'module add ' + ngs_tools.bwa + ' && bwa sampe -f out.sam -r "@RQ\tID:<ID>\tLB:<LIBRARY_NAME>\tSM:<SAMPLE_NAME>\tPL:ILLUMINA" hg19 input1.sai input2.sai input1.fq input2.fq'
