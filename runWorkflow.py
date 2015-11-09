@@ -38,11 +38,11 @@ def local_realignment(args):
     blue('Going for STAGE_4 - local_realignment')
     blue('\tpart1')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Xmx4g -jar ' + args.GATK + ' -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
+        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -Xmx4g -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart2')
-        cmd = 'module add ' + ngs_tools_dict['Java'] + ' && java -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.GATK + ' -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
+        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -Xmx4g -Djava.io.tmpdir=/tmp -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart3')
