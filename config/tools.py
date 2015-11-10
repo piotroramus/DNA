@@ -6,7 +6,8 @@ class Tool(object):
 ngs_tools = [ Tool('bwa', 'bwa'),
           Tool('Java', 'apps/java'),
           Tool('Picard', 'apps/picard/1.140'),
-          Tool('GATK', 'tools/gatk') ]
+          Tool('GATK', 'tools/gatk'),
+          Tool('SamTools', 'tools/samtools/0.1.19') ]
 
 
 def dictify(tools):
