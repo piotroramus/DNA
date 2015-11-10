@@ -69,6 +69,15 @@ def quality_score_recalibration(args):
     ok('Done!')
 
 
+def produce_raw_SNP_calls(args):
+    blue('Going for STAGE_6 - produce_raw_SNP_calls')
+    with cwd(joiner(args.hg, 'chromFa')):
+        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -glm BOTH -R hg19.fa -T UnifiedGenotyper -I input.marked.realigned.fixed.recal.bam -D dbsnp132.txt -o snps.vcf -metrics snps.metrics -stand_call_conf 50.0 -stand_emit_conf 10.0 -dcov 1000 -A DepthOfCoverage -A AlleleBalance -L target_intervals.bed'
+        blue(cmd)
+        run_command(cmd, Exception)
+    ok('Done!')
+
+
 def main():
     """
     Main configuration method made to be called if user starts this script on his own
@@ -88,6 +97,7 @@ def main():
     parser.add_argument('-3', dest='STAGE_3', action='store_true', help='set true if you want to run stage 3 - \"marking_PCR_duplicates\"')
     parser.add_argument('-4', dest='STAGE_4', action='store_true', help='set true if you want to run stage 4 - \"local_realignment\"')
     parser.add_argument('-5', dest='STAGE_5', action='store_true', help='set true if you want to run stage 5 - \"quality score recalibration\"')
+    parser.add_argument('-6', dest='STAGE_6', action='store_true', help='set true if you want to run stage 6 - \"produce raw SNP calls\"')
     parser.add_argument('-all', dest='ALL_STAGES', action='store_true', help='set true if you want to run all stages one by one.')
     args = parser.parse_args()
 
@@ -103,6 +113,9 @@ def main():
         local_realignment(args)
     if args.STAGE_5 or args.ALL_STAGES:
         quality_score_recalibration(args)
+    if args.STAGE_6 or args.ALL_STAGES:
+        produce_raw_SNP_calls(args)
+    
 
 
 if __name__ == '__main__':
