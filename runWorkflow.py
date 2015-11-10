@@ -87,7 +87,7 @@ def main():
     parser.add_argument('-2', dest='STAGE_2', action='store_true', help='set true if you want to run stage 2 - \"SAM to BAM conversion\"')
     parser.add_argument('-3', dest='STAGE_3', action='store_true', help='set true if you want to run stage 3 - \"marking_PCR_duplicates\"')
     parser.add_argument('-4', dest='STAGE_4', action='store_true', help='set true if you want to run stage 4 - \"local_realignment\"')
-    parser.add_argument('-4', dest='STAGE_5', action='store_true', help='set true if you want to run stage 5 - \"quality score recalibration\"')
+    parser.add_argument('-5', dest='STAGE_5', action='store_true', help='set true if you want to run stage 5 - \"quality score recalibration\"')
     parser.add_argument('-all', dest='ALL_STAGES', action='store_true', help='set true if you want to run all stages one by one.')
     args = parser.parse_args()
 
