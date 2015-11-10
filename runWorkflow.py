@@ -1,25 +1,26 @@
 import argparse
 
 from config.config import blue, joiner, run_command, ok, cwd
+from config.tools import ngs_tools_dict
 
 
 def actual_alignment(args):
     blue('Going for STAGE_1 - actual_alignment')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = args.bwa + ' aln -t 4 -f input.sai hg19 input.fastq'
+        cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa aln -t 4 -f input.sai hg19 input.fastq'
         blue(cmd)
         run_command(cmd, Exception)
-        cmd = args.bwa + ' samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq'
+        cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq'
         blue(cmd)
         run_command(cmd, Exception)
-        # cmd = args.bwa + ' sampe -f out.sam -r "@RQ\tID:<ID>\tLB:<LIBRARY_NAME>\tSM:<SAMPLE_NAME>\tPL:ILLUMINA" hg19 input1.sai input2.sai input1.fq input2.fq'
     ok('done')
 
 
 def SAM_to_BAM_conversion(args):
     blue('Going for STAGE_2 - SAM_to_BAM_conversion')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = args.java + ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.PICARD + ' SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        # cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN -Xmx4g -Djava.io.tmpdir=/tmp SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
         blue(cmd)
         run_command(cmd, Exception)
     ok('done')
@@ -28,7 +29,8 @@ def SAM_to_BAM_conversion(args):
 def marking_PCR_duplicates(args):
     blue('Going for STAGE_3 - marking_PCR_duplicates')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = args.java + ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.PICARD + ' MarkDuplicates INPUT=output.bam OUTPUT=output.marked.bam METRICS_FILE=metrics CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT'
+        cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN MarkDuplicates INPUT=output.bam OUTPUT=output.marked.bam METRICS_FILE=metrics CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT'
+        # cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN -Xmx4g -Djava.io.tmpdir=/tmp MarkDuplicates INPUT=output.bam OUTPUT=output.marked.bam METRICS_FILE=metrics CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT'
         blue(cmd)
         run_command(cmd, Exception)
     ok('done')
@@ -38,15 +40,18 @@ def local_realignment(args):
     blue('Going for STAGE_4 - local_realignment')
     blue('\tpart1')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = args.java + ' -Xmx4g -jar ' + args.GATK + ' -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
+        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
+        # cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -Xmx4g -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart2')
-        cmd = args.java ' -Xmx4g -Djava.io.tmpdir=/tmp -jar ' + args.GATK + ' -I uotput.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
+        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
+        # cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -Xmx4g -Djava.io.tmpdir=/tmp -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart3')
-        cmd = args.java ' -Djava.io.tmpdir=/tmp/flx-auswerter -jar ' + args.PICARD + ' FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        # cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN -Djava.io.tmpdir=/tmp/flx-auswerter FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
     ok('Done!')
 
 
