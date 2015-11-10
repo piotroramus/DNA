@@ -42,10 +42,10 @@ def prepare_input_files(args=None):
         command = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa index -a bwtsw -p hg19 hg19.fa'
         blue('\t' + command)
         run_command(command, Exception)
-        command = 'module add' + ngs_tools_dict['SamTools'] + ' && samtools faidx hg19.fa'
+        command = 'module add ' + ngs_tools_dict['SamTools'] + ' && samtools faidx hg19.fa'
         blue('\t' + command)
         run_command(command, Exception)
-        command = 'module add' + ngs_tools_dict['Picard'] + ' && $PICARDRUN CreateSequenceDictionary REFERENCE=hg19.fa OUTPUT=hg19.dict'
+        command = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN CreateSequenceDictionary REFERENCE=hg19.fa OUTPUT=hg19.dict'
         blue('\t' + command)
         run_command(command, Exception)
     ok('  ok\n')
