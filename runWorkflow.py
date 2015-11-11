@@ -50,7 +50,7 @@ def local_realignment(args):
         blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart3')
-        cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN FixMateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
         blue(cmd)
         run_command(cmd, Exception)
         # cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN -Djava.io.tmpdir=/tmp/flx-auswerter FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
