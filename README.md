@@ -12,3 +12,5 @@ Opiekun pracy:
 dr inż Maciej Malawski. 
 
 http://www.icsr.agh.edu.pl/~malawski/
+
+Część WEB znajduje się w repozytorium pod adresem https://bitbucket.org/mikolano/dna-webapp
