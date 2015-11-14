@@ -77,6 +77,7 @@ def download_file(name, url, destination):
     command = 'wget ' + url + ' -O ' + os.path.join(destination, file_name)
     blue('\t' + command)
     run_command(command, Exception)
+    return True
 
 
 if __name__ == '__main__':

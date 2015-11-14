@@ -57,6 +57,20 @@ def local_realignment(args):
     ok('Done!')
 
 
+def quality_score_recalibration(args):
+    blue('Going for STAGE_5 - quality_score_recalibration')
+    with cwd(joiner(args.hg, 'chromFa')):
+        blue('\tpart1')
+        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -l INFO -R hg19.fa --DBSNP dbsnp132.txt -I input_bam.marked.realigned.fixed.bam -T CountCovariates -cov ReadGroupCovariate -cov QualityScoreCovariate -cov CycleCovariate -cov DinucCovariate -recalFile input.recal_data.csv'
+        blue(cmd)
+        run_command(cmd, Exception)
+        blue('\tpart2')
+        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -l INFO -R hg19.fa -I input_bam.marked.realigned.fixed.bam -T TableRecalibration --out input.marked.realigned.fixed.recal.bam -recalFile input.recal_data.csv'
+        blue(cmd)
+        run_command(cmd, Exception)
+    ok('Done!')
+
+
 def main():
     """
     Main configuration method made to be called if user starts this script on his own
@@ -75,6 +89,7 @@ def main():
     parser.add_argument('-2', dest='STAGE_2', action='store_true', help='set true if you want to run stage 2 - \"SAM to BAM conversion\"')
     parser.add_argument('-3', dest='STAGE_3', action='store_true', help='set true if you want to run stage 3 - \"marking_PCR_duplicates\"')
     parser.add_argument('-4', dest='STAGE_4', action='store_true', help='set true if you want to run stage 4 - \"local_realignment\"')
+    parser.add_argument('-5', dest='STAGE_5', action='store_true', help='set true if you want to run stage 5 - \"quality score recalibration\"')
     parser.add_argument('-all', dest='ALL_STAGES', action='store_true', help='set true if you want to run all stages one by one.')
     args = parser.parse_args()
 
@@ -88,6 +103,9 @@ def main():
         marking_PCR_duplicates(args)
     if args.STAGE_4 or args.ALL_STAGES:
         local_realignment(args)
+    if args.STAGE_5 or args.ALL_STAGES:
+        quality_score_recalibration(args)
+
 
 if __name__ == '__main__':
     main()
