@@ -29,9 +29,9 @@ def prepare_input_files(args=None):
     mkdir(args.hg)
     if not exists(os.path.join(args.download, 'chromFa.tar.gz')):  
         if not download_file(args.hg, downloadURLs['hg19'], args.download):  
-            return False
+            raise Exception('Something went wrong while downloading the reference file')
     if not extract_file(joiner(args.download, 'chromFa.tar.gz'), joiner(args.hg, 'chromFa')):
-        return False
+        raise Exception('Something went wrong while extracting the reference file.')
 
     with cwd(joiner(args.hg, 'chromFa')):
         command = 'cat chr1.fa chr2.fa chr3.fa chr4.fa chr5.fa chr6.fa chr7.fa chr8.fa chr9.fa\
