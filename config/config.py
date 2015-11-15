@@ -81,7 +81,9 @@ def joiner(path, *paths):
     return os.path.abspath(os.path.join(path, *paths))
 
 
-def run_command(command, error_type, ship_output=False):
+def run_command(command, error_type, ship_output=False, print_cmd=True):
+    if print_cmd:
+        blue(command)
     if ship_output:
         p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     else:
