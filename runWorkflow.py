@@ -50,11 +50,9 @@ def quality_score_recalibration(args):
     with cwd(joiner(args.hg, 'chromFa')):
         blue('\tpart1')
         cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T BaseRecalibrator -R hg19.fa -I input_bam.marked.realigned.fixed.bam -L chr20 -knownSites dbsnp_138.hg19.vcf -o recal_data.table'
-        blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart2')
         cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T PrintReads -R hg19.fa -I input_bam.marked.realigned.fixed.bam -L chr20 -BQSR recal_data.table -o recal_reads.bam'
-        blue(cmd)
         run_command(cmd, Exception)
     ok('Done!')
 
