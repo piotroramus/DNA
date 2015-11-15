@@ -8,10 +8,8 @@ def actual_alignment(args):
     blue('Going for STAGE_1 - actual_alignment')
     with cwd(joiner(args.hg, 'chromFa')):
         cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa aln -t 4 -f input.sai hg19 input.fastq'
-        blue(cmd)
         run_command(cmd, Exception)
         cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq'
-        blue(cmd)
         run_command(cmd, Exception)
     ok('done')
 
@@ -20,8 +18,6 @@ def SAM_to_BAM_conversion(args):
     blue('Going for STAGE_2 - SAM_to_BAM_conversion')
     with cwd(joiner(args.hg, 'chromFa')):
         cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
-        # cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN -Xmx4g -Djava.io.tmpdir=/tmp SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
-        blue(cmd)
         run_command(cmd, Exception)
     ok('done')
 
@@ -30,8 +26,6 @@ def marking_PCR_duplicates(args):
     blue('Going for STAGE_3 - marking_PCR_duplicates')
     with cwd(joiner(args.hg, 'chromFa')):
         cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN MarkDuplicates INPUT=output.bam OUTPUT=output.marked.bam METRICS_FILE=metrics CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT'
-        # cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN -Xmx4g -Djava.io.tmpdir=/tmp MarkDuplicates INPUT=output.bam OUTPUT=output.marked.bam METRICS_FILE=metrics CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT'
-        blue(cmd)
         run_command(cmd, Exception)
     ok('done')
 
@@ -41,19 +35,13 @@ def local_realignment(args):
     blue('\tpart1')
     with cwd(joiner(args.hg, 'chromFa')):
         cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
-        # cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -Xmx4g -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
-        blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart2')
         cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
-        # cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -Xmx4g -Djava.io.tmpdir=/tmp -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
-        blue(cmd)
         run_command(cmd, Exception)
         blue('\tpart3')
         cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN FixMateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
-        blue(cmd)
         run_command(cmd, Exception)
-        # cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN -Djava.io.tmpdir=/tmp/flx-auswerter FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
     ok('Done!')
 
 
