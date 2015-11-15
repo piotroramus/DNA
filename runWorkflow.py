@@ -72,7 +72,7 @@ def quality_score_recalibration(args):
 def produce_raw_SNP_calls(args):
     blue('Going for STAGE_6 - produce_raw_SNP_calls')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -glm BOTH -R hg19.fa -T UnifiedGenotyper -I input.marked.realigned.fixed.recal.bam -D dbsnp132.txt -o snps.vcf -metrics snps.metrics -stand_call_conf 50.0 -stand_emit_conf 10.0 -dcov 1000 -A DepthOfCoverage -A AlleleBalance -L target_intervals.bed'
+        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T HaplotypeCaller -R hg19.fa -I recal_reads.bam -L chr20 --genotyping_mode DISCOVERY -stand_call_conf 30 -stand_emit_conf 10 -o raw_variants.vcf'
         blue(cmd)
         run_command(cmd, Exception)
     ok('Done!')
