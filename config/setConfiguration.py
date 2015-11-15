@@ -38,6 +38,10 @@ def prepare_input_files(args=None):
             chr10.fa chr11.fa chr12.fa chr13.fa chr14.fa chr15.fa chr16.fa chr17.fa chr18.fa\
             chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa > hg19.fa'
         run_command(command, Exception)
+        command = 'wget ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/dbsnp_138.hg19.vcf.gz'
+        run_command(command, Exception)
+        command = 'gunzip dbsnp_138.hg19.vcf.gz'
+        run_command(command, Exception)
         command = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa index -a bwtsw -p hg19 hg19.fa'
         run_command(command, Exception)
         command = 'module add ' + ngs_tools_dict['SamTools'] + ' && samtools faidx hg19.fa'
