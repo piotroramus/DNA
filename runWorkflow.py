@@ -61,7 +61,6 @@ def produce_raw_SNP_calls(args):
     blue('Going for STAGE_6 - produce_raw_SNP_calls')
     with cwd(joiner(args.hg, 'chromFa')):
         cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T HaplotypeCaller -R hg19.fa -I recal_reads.bam -L chr20 --genotyping_mode DISCOVERY -stand_call_conf 30 -stand_emit_conf 10 -o raw_variants.vcf'
-        blue(cmd)
         run_command(cmd, Exception)
     ok('Done!')
 
