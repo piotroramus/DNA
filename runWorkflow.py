@@ -18,7 +18,6 @@ def SAM_to_BAM_conversion(args):
     blue('Going for STAGE_2 - SAM_to_BAM_conversion')
     with cwd(joiner(args.hg, 'chromFa')):
         cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
-        # cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN -Xmx4g -Djava.io.tmpdir=/tmp SortSam SO=coordinate INPUT=out.sam OUTPUT=output.bam VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
         run_command(cmd, Exception)
     ok('done')
 
@@ -41,7 +40,8 @@ def local_realignment(args):
         cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
         run_command(cmd, Exception)
         blue('\tpart3')
-        cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN FixmateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN FixMateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
+        run_command(cmd, Exception)
     ok('Done!')
 
 
