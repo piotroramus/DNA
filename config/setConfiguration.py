@@ -34,19 +34,19 @@ def prepare_input_files(args=None):
         raise Exception('Something went wrong while extracting the reference file.')
 
     with cwd(joiner(args.hg, 'chromFa')):
-        command = 'cat chr1.fa chr2.fa chr3.fa chr4.fa chr5.fa chr6.fa chr7.fa chr8.fa chr9.fa\
+        command = 'cat chrM.fa chr1.fa chr2.fa chr3.fa chr4.fa chr5.fa chr6.fa chr7.fa chr8.fa chr9.fa\
             chr10.fa chr11.fa chr12.fa chr13.fa chr14.fa chr15.fa chr16.fa chr17.fa chr18.fa\
-            chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa chrM.fa > hg19.fa'
-        blue('\t' + command)
+            chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa > hg19.fa'
+        run_command(command, Exception)
+        command = 'wget ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/dbsnp_138.hg19.vcf.gz'
+        run_command(command, Exception)
+        command = 'gunzip dbsnp_138.hg19.vcf.gz'
         run_command(command, Exception)
         command = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa index -a bwtsw -p hg19 hg19.fa'
-        blue('\t' + command)
         run_command(command, Exception)
         command = 'module add ' + ngs_tools_dict['SamTools'] + ' && samtools faidx hg19.fa'
-        blue('\t' + command)
         run_command(command, Exception)
         command = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN CreateSequenceDictionary REFERENCE=hg19.fa OUTPUT=hg19.dict'
-        blue('\t' + command)
         run_command(command, Exception)
     ok('  ok\n')
     return True
@@ -56,7 +56,6 @@ def extract_file(path, destination, flags=''):
     print ' Extracting file: ' + path + ' into: ' + destination
     mkdir(destination)
     command = 'tar xf ' + path + ' -C ' + destination + ' ' + flags
-    blue('\t' + command)
     run_command(command, Exception)
     ok('  ok\n')
     return True
@@ -75,7 +74,6 @@ def download_file(name, url, destination):
     file_name = url.split('/')[-1]
     blue('\tDownloading: ' + file_name)
     command = 'wget ' + url + ' -O ' + os.path.join(destination, file_name)
-    blue('\t' + command)
     run_command(command, Exception)
     return True
 
