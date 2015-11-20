@@ -38,7 +38,7 @@ def prepare_input_files(args=None):
             chr10.fa chr11.fa chr12.fa chr13.fa chr14.fa chr15.fa chr16.fa chr17.fa chr18.fa\
             chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa > hg19.fa'
         run_command(command, Exception)
-        command = 'wget ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/dbsnp_138.hg19.vcf.gz'
+        command = 'wget ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/dbsnp_138.hg19.vcf.gz 2>/dev/null'
         run_command(command, Exception)
         command = 'gunzip dbsnp_138.hg19.vcf.gz'
         run_command(command, Exception)
@@ -73,7 +73,7 @@ def exists(path):
 def download_file(name, url, destination):
     file_name = url.split('/')[-1]
     blue('\tDownloading: ' + file_name)
-    command = 'wget ' + url + ' -O ' + os.path.join(destination, file_name)
+    command = 'wget ' + url + ' -O ' + os.path.join(destination, file_name) + ' 2>/dev/null'
     run_command(command, Exception)
     return True
 
