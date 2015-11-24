@@ -43,7 +43,7 @@ def prepare_input_files(args=None):
         # command = 'wget ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/dbsnp_138.hg19.vcf.gz 2>/dev/null'
         # run_command(command, Exception)
 
-        command = 'gunzip dbsnp_138.hg19.vcf.gz'
+        command = 'gunzip -f dbsnp_138.hg19.vcf.gz'
         run_command(command, Exception)
         command = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa index -a bwtsw -p hg19 hg19.fa'
         run_command(command, Exception)
