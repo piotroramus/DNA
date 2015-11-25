@@ -4,6 +4,7 @@ import subprocess
 
 downloadURLs = {
     'hg19': 'http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromFa.tar.gz',
+    'dbsnp': 'ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/dbsnp_138.hg19.vcf.gz'
 }
 
 
@@ -81,7 +82,7 @@ def joiner(path, *paths):
     return os.path.abspath(os.path.join(path, *paths))
 
 
-def run_command(command, error_type, ship_output=False, print_cmd=True):
+def run_command(command, error_type, ship_output=False, print_cmd=True, hide_stderr=False):
     if print_cmd:
         blue(command)
     if ship_output:
@@ -89,9 +90,10 @@ def run_command(command, error_type, ship_output=False, print_cmd=True):
     else:
         p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
     out, err = p.communicate()
-    if (p.returncode == 0) and err:
+    if (p.returncode == 0) and err and not hide_stderr:
         warning('WARNING: \n' + err + '\n')
     elif p.returncode > 0:
+        warning('WARNING: \n' + err + '\n')
         raise error_type('Something went wrong while: ' + command + '\n' + err)
     if ship_output:
         return out.strip()
