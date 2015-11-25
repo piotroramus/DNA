@@ -1,16 +1,17 @@
 import argparse
 
-from config.config import blue, joiner, run_command, ok, cwd
+from config.config import blue, joiner, run_command, ok, cwd, run_commands
 from config.tools import ngs_tools_dict
 
 
 def actual_alignment(args):
     blue('Going for STAGE_1 - actual_alignment')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa aln -t 4 -f input.sai hg19 input.fastq'
-        run_command(cmd, Exception)
-        cmd = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq'
-        run_command(cmd, Exception)
+        cmds = [
+            'module add ' + ngs_tools_dict['bwa'] + ' && bwa aln -t 4 -f input.sai hg19 input.fastq',
+            'module add ' + ngs_tools_dict['bwa'] + ' && bwa samse -f out.sam -r "@RG\tID:bwa\tLB:Exome1Lib\tSM:Exome1Sampl\tPL:ILLUMINA" hg19 input.sai input.fastq',
+        ]
+        run_commands(cmds, Exception)
     ok('done')
 
 
@@ -32,33 +33,29 @@ def marking_PCR_duplicates(args):
 
 def local_realignment(args):
     blue('Going for STAGE_4 - local_realignment')
-    blue('\tpart1')
     with cwd(joiner(args.hg, 'chromFa')):
-        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam'
-        run_command(cmd, Exception)
-        blue('\tpart2')
-        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam'
-        run_command(cmd, Exception)
-        blue('\tpart3')
-        cmd = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN FixMateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true'
-        run_command(cmd, Exception)
+        cmds = [
+            'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T RealignerTargetCreator -R hg19.fa -o input.bam.list -I output.marked.bam',
+            'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -I output.marked.bam -R hg19.fa -T IndelRealigner -targetIntervals input.bam.list -o input.marked.realigned.bam',
+            'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN FixMateInformation INPUT=input.marked.realigned.bam OUTPUT=input_bam.marked.realigned.fixed.bam SO=coordinate VALIDATION_STRINGENCY=LENIENT CREATE_INDEX=true',
+        ]
+        run_commands(cmds, Exception)
     ok('Done!')
 
 
 def quality_score_recalibration(args):
     blue('Going for STAGE_5 - quality_score_recalibration')
     with cwd(joiner(args.hg, 'chromFa')):
-        blue('\tpart1')
-        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T BaseRecalibrator -R hg19.fa -I input_bam.marked.realigned.fixed.bam -L chr20 -knownSites dbsnp_138.hg19.vcf -o recal_data.table'
-        run_command(cmd, Exception)
-        blue('\tpart2')
-        cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T PrintReads -R hg19.fa -I input_bam.marked.realigned.fixed.bam -L chr20 -BQSR recal_data.table -o recal_reads.bam'
-        run_command(cmd, Exception)
+        cmds = [
+            'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T BaseRecalibrator -R hg19.fa -I input_bam.marked.realigned.fixed.bam -L chr20 -knownSites dbsnp_138.hg19.vcf -o recal_data.table',
+            'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T PrintReads -R hg19.fa -I input_bam.marked.realigned.fixed.bam -L chr20 -BQSR recal_data.table -o recal_reads.bam',
+        ]
+        run_commands(cmds, Exception)
     ok('Done!')
 
 
-def produce_raw_SNP_calls(args):
-    blue('Going for STAGE_6 - produce_raw_SNP_calls')
+def run_haplotype_caller(args):
+    blue('Going for STAGE_6 - run_haplotype_caller')
     with cwd(joiner(args.hg, 'chromFa')):
         cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T HaplotypeCaller -R hg19.fa -I recal_reads.bam -L chr20 --genotyping_mode DISCOVERY -stand_call_conf 30 -stand_emit_conf 10 -o raw_variants.vcf'
         run_command(cmd, Exception)
@@ -73,12 +70,6 @@ def main():
     parser = argparse.ArgumentParser(description=blue('NGS configurator'))
     parser.add_argument('-download', default=joiner('downloads'), help='path to download directory')
     parser.add_argument('-hg', default=joiner('hg19'), help='path to hg19 reference files directory')
-    parser.add_argument('-apps', default=joiner('apps'), help='path to applications directory')
-    parser.add_argument('-bwa', default='bwa', help='path to bwa executable')
-    parser.add_argument('-java', default='java', help='path to java executable')
-    parser.add_argument('--java-home', dest='JAVA_HOME', default='/usr/lib', help='path to JAVA_HOME')
-    parser.add_argument('-picard', dest='PICARD', default='picard', help='path to picard jar')
-    parser.add_argument('-gatk', dest='GATK', default='gatk', help='path to GATK jar')
     parser.add_argument('-1', dest='STAGE_1', action='store_true', help='set true if you want to run stage 1 - \"actual alignment\"')
     parser.add_argument('-2', dest='STAGE_2', action='store_true', help='set true if you want to run stage 2 - \"SAM to BAM conversion\"')
     parser.add_argument('-3', dest='STAGE_3', action='store_true', help='set true if you want to run stage 3 - \"marking_PCR_duplicates\"')
@@ -101,7 +92,7 @@ def main():
     if args.STAGE_5 or args.ALL_STAGES:
         quality_score_recalibration(args)
     if args.STAGE_6 or args.ALL_STAGES:
-        produce_raw_SNP_calls(args)
+        run_haplotype_caller(args)
     
 
 

@@ -97,3 +97,11 @@ def run_command(command, error_type, ship_output=False, print_cmd=True, hide_std
         raise error_type('Something went wrong while: ' + command + '\n' + err)
     if ship_output:
         return out.strip()
+
+
+def run_commands(list_of_commands, error_type, ship_output=False, print_cmd=True):
+    for cmd in list_of_commands:
+        if ship_output:
+            return run_command(cmd, error_type, ship_output=ship_output, print_cmd=print_cmd)
+        else:
+            run_command(cmd, error_type, ship_output=ship_output, print_cmd=print_cmd)
