@@ -90,7 +90,7 @@ def run_command(command, error_type, ship_output=False, print_cmd=True, hide_std
     else:
         p = subprocess.Popen(command, shell=True, stderr=subprocess.PIPE)
     out, err = p.communicate()
-    if (p.returncode == 0) and err and (not hide_stderr):
+    if (p.returncode == 0) and err and not hide_stderr:
         warning('WARNING: \n' + err + '\n')
     elif p.returncode > 0:
         warning('WARNING: \n' + err + '\n')
