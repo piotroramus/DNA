@@ -57,8 +57,8 @@ def quality_score_recalibration(args):
     ok('Done!')
 
 
-def produce_raw_SNP_calls(args):
-    blue('Going for STAGE_6 - produce_raw_SNP_calls')
+def run_haplotype_caller(args):
+    blue('Going for STAGE_6 - run_haplotype_caller')
     with cwd(joiner(args.hg, 'chromFa')):
         cmd = 'module add ' + ngs_tools_dict['GATK'] + ' && $GATK_RUN -T HaplotypeCaller -R hg19.fa -I recal_reads.bam -L chr20 --genotyping_mode DISCOVERY -stand_call_conf 30 -stand_emit_conf 10 -o raw_variants.vcf'
         run_command(cmd, Exception)
@@ -101,7 +101,7 @@ def main():
     if args.STAGE_5 or args.ALL_STAGES:
         quality_score_recalibration(args)
     if args.STAGE_6 or args.ALL_STAGES:
-        produce_raw_SNP_calls(args)
+        run_haplotype_caller(args)
     
 
 
