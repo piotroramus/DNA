@@ -49,6 +49,8 @@ def prepare_input_files(args=None):
         run_command(command, Exception)
         command = 'module add ' + ngs_tools_dict['SamTools'] + ' && samtools faidx hg19.fa'
         run_command(command, Exception)
+        command = 'rm -f hg19.dict'
+        run_command(command, Exception)
         command = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN CreateSequenceDictionary REFERENCE=hg19.fa OUTPUT=hg19.dict'
         run_command(command, Exception)
     ok('  ok\n')
