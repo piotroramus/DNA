@@ -2,6 +2,7 @@ import argparse
 
 from config.config import blue, joiner, run_command, ok, cwd, run_commands
 from config.tools import ngs_tools_dict
+from config.setConfiguration import download_file
 
 
 def actual_alignment(args):
@@ -77,7 +78,14 @@ def main():
     parser.add_argument('-5', dest='STAGE_5', action='store_true', help='set true if you want to run stage 5 - \"quality score recalibration\"')
     parser.add_argument('-6', dest='STAGE_6', action='store_true', help='set true if you want to run stage 6 - \"produce raw SNP calls\"')
     parser.add_argument('-all', dest='ALL_STAGES', action='store_true', help='set true if you want to run all stages one by one.')
+    parser.add_argument('--seq-read-url', dest='SEQ_READ_URL', help='url to your input file')
     args = parser.parse_args()
+
+    if args.SEQ_READ_URL:
+        if not download_file('input file', args.SEQ_READ_URL, joiner(args.hg, 'chromFa')):
+            raise Exception('Something went wrong while downloading the input file')
+        with cwd(joiner(args.hg, 'chromFa')):
+            run_command('gunzip -f ' + args.SEQ_READ_URL.strip().split('/')[-1], Exception)
 
     if args.ALL_STAGES:
         blue('All stages to be processed.')
