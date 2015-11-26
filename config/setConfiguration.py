@@ -3,7 +3,7 @@ import os
 import urllib2
 import subprocess
 import shutil
-from config import blue, warning, ok, fail, downloadURLs, cwd, joiner, run_command
+from config import blue, warning, ok, fail, downloadURLs, cwd, joiner, run_command, run_commands
 from tools import ngs_tools_dict
 
 def main():
@@ -36,23 +36,17 @@ def prepare_input_files(args=None):
             raise Exception('Something went wrong while downloading the reference file')
 
     with cwd(joiner(args.hg, 'chromFa')):
-        command = 'cat chrM.fa chr1.fa chr2.fa chr3.fa chr4.fa chr5.fa chr6.fa chr7.fa chr8.fa chr9.fa\
+        commands = [
+            'cat chrM.fa chr1.fa chr2.fa chr3.fa chr4.fa chr5.fa chr6.fa chr7.fa chr8.fa chr9.fa\
             chr10.fa chr11.fa chr12.fa chr13.fa chr14.fa chr15.fa chr16.fa chr17.fa chr18.fa\
-            chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa > hg19.fa'
-        run_command(command, Exception)
-        # command = 'wget ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/2.8/hg19/dbsnp_138.hg19.vcf.gz 2>/dev/null'
-        # run_command(command, Exception)
-
-        command = 'gunzip -f dbsnp_138.hg19.vcf.gz'
-        run_command(command, Exception)
-        command = 'module add ' + ngs_tools_dict['bwa'] + ' && bwa index -a bwtsw -p hg19 hg19.fa'
-        run_command(command, Exception)
-        command = 'module add ' + ngs_tools_dict['SamTools'] + ' && samtools faidx hg19.fa'
-        run_command(command, Exception)
-        command = 'rm -f hg19.dict'
-        run_command(command, Exception)
-        command = 'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN CreateSequenceDictionary REFERENCE=hg19.fa OUTPUT=hg19.dict'
-        run_command(command, Exception)
+            chr19.fa chr20.fa chr21.fa chr22.fa chrX.fa chrY.fa > hg19.fa',
+            'gunzip -f dbsnp_138.hg19.vcf.gz',
+            'module add ' + ngs_tools_dict['bwa'] + ' && bwa index -a bwtsw -p hg19 hg19.fa',
+            'module add ' + ngs_tools_dict['SamTools'] + ' && samtools faidx hg19.fa',
+            'rm -f hg19.dict',
+            'module add ' + ngs_tools_dict['Picard'] + ' && $PICARDRUN CreateSequenceDictionary REFERENCE=hg19.fa OUTPUT=hg19.dict',
+        ]
+        run_commands(commands, Exception)
     ok('  ok\n')
     return True
 
