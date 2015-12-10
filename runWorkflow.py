@@ -86,6 +86,7 @@ def main():
             raise Exception('Something went wrong while downloading the input file')
         with cwd(joiner(args.hg, 'chromFa')):
             run_command('gunzip -f ' + args.SEQ_READ_URL.strip().split('/')[-1], Exception)
+            run_command('mv ' + args.SEQ_READ_URL.strip().split('/')[-1].strip().split('.gz')[0] + ' input.fastq', Exception)
 
     if args.ALL_STAGES:
         blue('All stages to be processed.')
