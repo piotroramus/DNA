@@ -3,7 +3,7 @@ if [ $# -eq 2 ]; then
   OUTPUT_FILE=$1
   SEQ_URL=$2
 
-  python $HOME/DNA/runWorkflow.py -download $STORAGE/download -hg $SCRATCH/hg --seq-read-url $SEQ_URL -1 > $OUTPUT_FILE
+  python $HOME/DNA/runWorkflow.py -download $STORAGE/download -hg $SCRATCH/hg --seq-read-url $SEQ_URL -all > $OUTPUT_FILE
 else
 	echo "Incorrect number of arguments passed $# expected 2"
 fi
